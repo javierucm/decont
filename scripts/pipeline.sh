@@ -1,17 +1,21 @@
+##Contaminant fasta file:
+
+urlContam='https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz'
+
 #Download all the files specified in data/filenames
 for url in $(cat data/urls) #TODO
 do
     echo $url
     bash scripts/download.sh $url data
 done
-exit
+
 # Download the contaminants fasta file, uncompress it, and
 # filter to remove all small nuclear RNAs
-bash scripts/download.sh <contaminants_url> res yes #TODO
+bash scripts/download.sh $urlContam res yes "??????"  #????TODO
 
 # Index the contaminants file
 bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
-
+exit
 # Merge the samples into a single file
 for sid in $(<list_of_sample_ids>) #TODO
 do

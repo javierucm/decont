@@ -19,5 +19,19 @@
 
 orig=$1
 dest=$2
-
 wget -P $dest $orig 
+
+#Opt1 if grep -q "yes" <<< "$3" 
+#Opt 1 [[ "$3" == *"yes"* ]]  						
+#Opt 2: if [ $(echo "$3" | grep "yes" | wc -l) -ne 0 ]
+#Opt 3: if echo "$3" | grep -q  "yes"
+#Opt1 if grep -q "yes" <<< "$3" 
+if [[ "$3"==*"yes"* ]]
+then
+	 echo "Descomprimimos" 
+desc=$(basename $orig)
+gunzip -k $dest/$desc
+
+fi
+
+
