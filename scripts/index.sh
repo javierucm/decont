@@ -4,5 +4,12 @@
 # The STAR command is provided for you. You should replace the parts surrounded
 # by "<>" and uncomment it.
 
+if [ "$#" -ne 2 ]
+then
+    echo "Error:Unespecified parameters"
+    exit 1
+fi
+
+
  STAR --runThreadN 4 --runMode genomeGenerate --genomeDir $2 \
  --genomeFastaFiles $1 --genomeSAindexNbases 9

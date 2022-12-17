@@ -1,9 +1,10 @@
 #Download all the files specified in data/filenames
-for url in $(<list_of_urls>) #TODO
+for url in $(cat data/urls) #TODO
 do
+    echo $url
     bash scripts/download.sh $url data
 done
-
+exit
 # Download the contaminants fasta file, uncompress it, and
 # filter to remove all small nuclear RNAs
 bash scripts/download.sh <contaminants_url> res yes #TODO

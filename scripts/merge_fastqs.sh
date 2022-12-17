@@ -3,6 +3,14 @@
 # stored in the output directory specified by the second argument ($2).
 #
 # The directory containing the samples is indicated by the first argument ($1).
+
+if [ "$#" -ne 3 ]
+then
+    echo "Error: Three arguments are required"
+    exit 1
+fi
+
+
 mkdir -p $2
 #echo "cat "$1"/"$3* > "$2"/"$3" "
 ext=".fastq.gz"

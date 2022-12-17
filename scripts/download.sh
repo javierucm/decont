@@ -16,3 +16,8 @@
 #   CCAGGATTTACAGACTTTAAA
 #
 #   If $4 == "another" only the **first two sequence** should be output
+
+orig=$1
+dest=$2
+
+wget -P $dest $orig 
