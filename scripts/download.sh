@@ -34,4 +34,7 @@ gunzip -k $dest/$desc
 
 fi
 
-
+if [-z "$3"]
+then
+zcat res/contaminants.fasta.gz | seqkit grep  -r -i -n -v -p "$3"
+fi
