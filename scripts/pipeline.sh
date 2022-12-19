@@ -28,24 +28,24 @@ done
 
 # TODO: run cutadapt for all merged files
 
-mkdir -p out/trimmed   #RECHECK!!!!!!!!!!!
-
+mkdir -p out/trimmed  
+mkdir -p log/cutadapt
 for file in out/merged/*
 do
-#	outfile="out/trimmed/"$( echo $(basename $file)| sed 's/.fastq/.trimmed.fastq/')
+	sid=$(basename $file | sed 's/.fastq.gz//') 
 #	 cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed \
-#	-o $outfile $file
-	# -o <trimmed_file> out/merged > <log_file> RECHECKKKK!!!
+#	-o out/trimmed/"$sid".trimmed.fastq.gz $file > log/cutadapt/"$sid".log
+	
 done
 
 # TODO: run STAR for all trimmed files
 for fname in out/trimmed/*.fastq.gz
 do
-    sid=$(echo $(basename $fname)|sed 's/.trimmed.fastq.gz//') 
+    sid=$(basename $fname|sed 's/.trimmed.fastq.gz//') 
    mkdir -p out/star/$sid
-   STAR --runThreadN 4 --genomeDir res/contaminants_idx \
-      --outReadsUnmapped Fastx --readFilesIn $fname \
-      --readFilesCommand gunzip -c --outFileNamePrefix out/star/$sid/
+ #  STAR --runThreadN 4 --genomeDir res/contaminants_idx \
+ #     --outReadsUnmapped Fastx --readFilesIn $fname \
+ #     --readFilesCommand gunzip -c --outFileNamePrefix out/star/$sid/
 done 
 
 # TODO: create a log file containing information from cutadapt and star logs
@@ -53,3 +53,22 @@ done
 # - cutadapt: Reads with adapters and total basepairs
 # - star: Percentages of uniquely mapped reads, reads mapped to multiple loci, and to too many loci
 # tip: use grep to filter the lines you're interested in
+for file in log/cutadapt/*.log
+do
+	echo $file
+	sid=$(basename $file | sed 's/.log//')
+	echo "#################">>Log.out
+	echo "Sample : $sid">>Log.out
+#	cat $file  | grep "Total basepairs processed|Reads with adapters" | cut -d: -f1,2 >>Log.out
+	cat $file  | grep "Reads with adapters" | cut -d: -f1,2 >>Log.out
+  	cat  out/star/$sid/Log.final.out |sed -e 's/^[ \t]*//'  | grep  "Uniquely mapped reads %" | cut -d\| -f1,2 --output-delimiter=":" >>Log.out
+	cat  out/star/$sid/Log.final.out |sed -e 's/^[ \t]*//'  | grep  "% of reads mapped to multiple loci" | cut -d\| -f1,2 --output-delimiter=":" >>Log.out
+	cat  out/star/$sid/Log.final.out |sed -e 's/^[ \t]*//'  | grep  "% of reads mapped to too many loci" | cut -d\| -f1,2 --output-delimiter=":" >>Log.out
+	
+
+
+done
+
+cat Log.out
+
+
