@@ -26,15 +26,28 @@ wget -P $dest $orig
 #Opt 2: if [ $(echo "$3" | grep "yes" | wc -l) -ne 0 ]
 #Opt 3: if echo "$3" | grep -q  "yes"
 #Opt1 if grep -q "yes" <<< "$3" 
+
+baseOrig=$(basename $orig)
+
+
 if [[ "$3"==*"yes"* ]]
 then
 	 echo "Descomprimimos" 
-desc=$(basename $orig)
-gunzip -k $dest/$desc
-
+#desc=$(basename $orig)
+echo "gunzip -k $dest/$baseOrig"
+gunzip -k $dest/$baseOrig
+echo "Fin Descomprimimos"
 fi
 
-if [-z "$3"]
+
+echo "Imprimimos la cuarta"
+echo "$4"
+
+if [ ! -z "$4" ]
 then
-zcat res/contaminants.fasta.gz | seqkit grep  -r -i -n -v -p "$3"
+	echo "Filtering"
+	echo "$4"
+	zcat $dest/$baseOrig | seqkit grep  -r -i -n -v -p "$4"
+
+	echo "Fin Filtering"
 fi

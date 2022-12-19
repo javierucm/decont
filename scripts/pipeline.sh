@@ -6,25 +6,37 @@ urlContam='https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta
 for url in $(cat data/urls) #TODO
 do
     echo $url
-    bash scripts/download.sh $url data
+#    bash scripts/download.sh $url data   UNCOMMENTTTTTTTTT
 done
 
 # Download the contaminants fasta file, uncompress it, and
 # filter to remove all small nuclear RNAs
-bash scripts/download.sh $urlContam res yes "??????"  #????TODO
+#bash scripts/download.sh $urlContam res yes "small nuclear"  #????TODO
 
 # Index the contaminants file
-bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
-exit
+echo "Indexing...................."
+#bash scripts/index.sh res/contaminants.fasta res/contaminants_idx   UNCOMMENT!!!!!!!!!!
+
+echo "Merging........................."
 # Merge the samples into a single file
-for sid in $(<list_of_sample_ids>) #TODO
+for sid in $(cat data/urls |  sed 's/.*\///' | sed 's/-.*//' |sort -u) #TODO
 do
-    bash scripts/merge_fastqs.sh data out/merged $sid
+
+echo $id
+ #   bash scripts/merge_fastqs.sh data out/merged $sid
 done
 
 # TODO: run cutadapt for all merged files
-# cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed \
-#     -o <trimmed_file> <input_file> > <log_file>
+
+mkdir -p out/trimmed   #RECHECK!!!!!!!!!!!
+
+for file in out/merged/*
+do
+	outfile="out/trimmed/"$( echo $(basename $file)| sed 's/.fastq/.trimmed.fastq/')
+	 cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed \
+	-o $outfile $file
+	# -o <trimmed_file> out/merged > <log_file> RECHECKKKK!!!
+done
 
 # TODO: run STAR for all trimmed files
 for fname in out/trimmed/*.fastq.gz
