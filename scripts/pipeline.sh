@@ -32,21 +32,20 @@ mkdir -p out/trimmed   #RECHECK!!!!!!!!!!!
 
 for file in out/merged/*
 do
-	outfile="out/trimmed/"$( echo $(basename $file)| sed 's/.fastq/.trimmed.fastq/')
-	 cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed \
-	-o $outfile $file
+#	outfile="out/trimmed/"$( echo $(basename $file)| sed 's/.fastq/.trimmed.fastq/')
+#	 cutadapt -m 18 -a TGGAATTCTCGGGTGCCAAGG --discard-untrimmed \
+#	-o $outfile $file
 	# -o <trimmed_file> out/merged > <log_file> RECHECKKKK!!!
 done
 
 # TODO: run STAR for all trimmed files
 for fname in out/trimmed/*.fastq.gz
 do
-    # you will need to obtain the sample ID from the filename
-    sid=#TODO
-    # mkdir -p out/star/$sid
-    # STAR --runThreadN 4 --genomeDir res/contaminants_idx \
-    #    --outReadsUnmapped Fastx --readFilesIn <input_file> \
-    #    --readFilesCommand gunzip -c --outFileNamePrefix <output_directory>
+    sid=$(echo $(basename $fname)|sed 's/.trimmed.fastq.gz//') 
+   mkdir -p out/star/$sid
+   STAR --runThreadN 4 --genomeDir res/contaminants_idx \
+      --outReadsUnmapped Fastx --readFilesIn $fname \
+      --readFilesCommand gunzip -c --outFileNamePrefix out/star/$sid/
 done 
 
 # TODO: create a log file containing information from cutadapt and star logs
