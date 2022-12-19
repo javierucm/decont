@@ -10,12 +10,9 @@ then
     exit 1
 fi
 
-
 mkdir -p $2
-#echo "cat "$1"/"$3* > "$2"/"$3" "
 ext=".fastq.gz"
-echo "cat "$1"/"$3"*"$ext"* > "$2"/"$3$ext" "
 cat "$1"/"$3"*"$ext"* > "$2"/"$3$ext"
 
 
-#cat "$1/$3*$ext* > $2/$3$ext"
+
