@@ -1,7 +1,7 @@
-if [ "$#" -eq 0 ] 
-then
-	set data resources output logs
-fi
+
+#Cleanup : Full cleanup if no parameters.
+[ "$#" -eq 0 ] && set data resources output logs 
+
 for arg; do
    case $arg in
   data)
@@ -16,7 +16,7 @@ for arg; do
   ;;
   logs)
    rm -rf log/*
-   rm Log.out
+   rm -f Log.out
   ;;
 esac
 done

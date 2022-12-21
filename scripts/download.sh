@@ -7,29 +7,30 @@
 
 orig=$1
 dest=$2
+
+#Download
 args=()
 [ -f "$orig" ] &&  args=(-P $dest -i $orig -nc) || args=(-P $dest $orig -nc)
 wget "${args[@]}" 
 
-#Check md5:
+
 [ -f $orig ] && urlFor=$(cat $orig) || urlFor=$orig
 for url in $urlFor
 do
+	#Check md5:
 	chkSumServ=$(curl -s "$url".md5  |  cut -d " " -f1 )
-	chkSumLocal=$(md5sum $dest/$(basename $url)| cut -d ' ' -f 1)  
+	chkSumLocal=$(md5sum $dest/$(basename $url)| cut -d " " -f1)
 	[ "$chkSumServ" != "$chkSumLocal" ] && echo "Warning: CheckSum Error -> "$url && exit 1;
+
+	#Unzip:
+	if [[ "$3"==*"yes"* ]] 
+	then
+	 	[ -e $dest/$(basename $url .gz) ] && echo "$url was already unzipped" ||  gunzip -k $dest/$(basename $url)
+	fi
 done
 
-#Gunzip (3 Argument)
-baseOrig=$(basename $orig)
-if [[ "$3"==*"yes"* ]]
-then
-  if [ -f "$orig" ]
-	then
-		sed "s/.*\///" "$orig" |  sed "s/^/$dest\//" | xargs gunzip -k
-	else baseOrig=$(basename $orig); gunzip -k $dest/$baseOrig
-  fi
-fi
+# Unzip with no iteration: sed "s/.*\///" "$orig" |  sed "s/^/$dest\//" | xargs gunzip -k
+
 #Filtering (4 Argument)
-[ ! -z "$4" ] && [ ! -f "$orig" ] && (zcat $dest/$baseOrig | seqkit grep  -r -i -n -v -p "$4")
+[ ! -z "$4" ] && [ ! -f "$orig" ] && (zcat $dest/$(basename $orig) | seqkit grep  -r -i -n -v -p "$4")>$dest/$(basename $orig .gz) 
 
