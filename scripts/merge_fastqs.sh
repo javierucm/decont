@@ -7,7 +7,6 @@
 [ "$#" -ne 3 ] && echo "Error: Three arguments are required" &&  exit 1
 
 ext=".fastq.gz"
-
 [ -e "$2"/"$3$ext" ] &&  echo "$3 was already merged" && exit 0;
 
 mkdir -p $2

@@ -1,7 +1,7 @@
 ##Contaminant fasta file:
 urlContam='https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz'
 
-#Download all the files specified in data/filenames
+#Download all the files specified in data/filenames. 
 #for url in $(cat data/urls) 
 #do
 #    bash scripts/download.sh $url data
@@ -14,7 +14,7 @@ bash scripts/download.sh data/urls data
 bash scripts/download.sh $urlContam res yes "small nuclear"  
 
 # Index the contaminants file
-bash scripts/index.sh res/contaminants.fasta res/contaminants_idx  
+bash scripts/index.sh res/contaminants-filtered.fasta res/contaminants_idx  
 
 # Merge the samples into a single file
 for sid in $(cat data/urls |  sed 's/.*\///' | sed 's/-.*//' |sort -u) 
@@ -37,11 +37,10 @@ done
 for fname in out/trimmed/*.fastq.gz
 do
     sid=$(basename $fname|sed 's/.trimmed.fastq.gz//') 
-    mkdir -p out/star/$sid
-   [ -e out/star/"$sid" ] && echo "$sid was already aligned" || echo "no tiene sentido" && echo "otro" && echo "no entiendo" && \
+   ([ -e out/star/"$sid" ] && echo "$sid was already aligned") || ( mkdir -p out/star/$sid && \
 	 STAR --runThreadN 4 --genomeDir res/contaminants_idx \
       --outReadsUnmapped Fastx --readFilesIn $fname \
-      --readFilesCommand gunzip -c --outFileNamePrefix out/star/$sid/
+      --readFilesCommand gunzip -c --outFileNamePrefix out/star/$sid/ )
 done 
 
 #Logs:
@@ -54,7 +53,4 @@ do
 	cat  out/star/$sid/Log.final.out|sed -e 's/^[ \t]*//' | sed -e 's/|/:/' \
 		| grep -E  "Uniquely mapped reads %|% of reads mapped to multiple loci|% of reads mapped to too many loci" >>Log.out
 done
-
-cat Log.out
-
 
