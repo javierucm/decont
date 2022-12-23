@@ -1,0 +1,13 @@
+name: linuxav
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - seqkit
+  - star
+  - cutadapt
+  - fastqc
+  - ca-certificates
+  - openssl
+prefix: /home/vant/mambaforge/envs/linuxav
